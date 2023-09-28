@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ApiService from '../service/ApiService';
 
 class Calculator extends Component {
     constructor() {
@@ -24,42 +25,87 @@ class Calculator extends Component {
         const { displayValue } = this.state;
         this.setState({
             operator,
-            firstOperand: parseFloat(displayValue),
+            firstOperand: displayValue,
             displayValue: '0',
         });
     };
 
     handleEqualsClick = () => {
         const { displayValue, operator, firstOperand } = this.state;
-        const secondOperand = parseFloat(displayValue);
-        let result = 0;
+        const secondOperand = displayValue;
+        const data = {
+            firstOperand: firstOperand,
+            secondOperand: secondOperand
+        };
+
 
         switch (operator) {
             case '+':
-                result = firstOperand + secondOperand;
+                ApiService.addition(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
                 break;
             case '-':
-                result = firstOperand - secondOperand;
+                ApiService.subtraction(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
                 break;
             case '*':
-                result = firstOperand * secondOperand;
+                ApiService.multiplication(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
                 break;
             case '/':
-                result = firstOperand / secondOperand;
+                ApiService.division(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
                 break;
             case '√':
-                result = Math.sqrt(firstOperand);
+                ApiService.squareRoot(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
+                break;
+            case 'r':
+                ApiService.randomString(data)
+                    .then((res) => {
+                        this.handleResult(res.data);
+                    }).catch(error => {
+                    this.handleError(error);
+                });
                 break;
             default:
                 return;
         }
 
-        this.setState({
-            displayValue: result.toString(),
-            operator: null,
-            firstOperand: result,
-        });
+
     };
+
+    handleResult(data){
+        this.setState({
+            displayValue: data.toString(),
+            operator: null,
+            firstOperand: data,
+        });
+    }
+
+    handleError(error){
+        console.error(error);
+    }
 
     handleClearClick = () => {
         this.setState({

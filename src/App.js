@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import CalculatorComponent from "./components/CalculatorComponent";
@@ -19,7 +18,7 @@ function App() {
 }
 
 const style = {
-    color: 'black',
+    color: 'lightgray',
     margin: '10px'
 }
 

@@ -1,170 +1,138 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import ApiService from '../service/ApiService';
 
-class Calculator extends Component {
-    constructor() {
-        super();
-        this.state = {
-            displayValue: '0',
-            operator: null,
-            firstOperand: null,
-        };
-    }
+function Calculator() {
+    const [displayValue, setDisplayValue] = useState('0');
+    const [operator, setOperator] = useState(null);
+    const [firstOperand, setFirstOperand] = useState(null);
 
-    handleDigitClick = (digit) => {
-        const { displayValue } = this.state;
-
+    const handleDigitClick = (digit) => {
         if (displayValue === '0') {
-            this.setState({ displayValue: digit });
+            setDisplayValue(digit);
         } else {
-            this.setState({ displayValue: displayValue + digit });
+            setDisplayValue(displayValue + digit);
         }
     };
 
-    handleOperatorClick = (operator) => {
-        const { displayValue } = this.state;
-        this.setState({
-            operator,
-            firstOperand: displayValue,
-            displayValue: '0',
-        });
+    const handleOperatorClick = (op) => {
+        setOperator(op);
+        setFirstOperand(displayValue);
+        setDisplayValue('0');
     };
 
-    handleEqualsClick = () => {
-        const { displayValue, operator, firstOperand } = this.state;
+    const handleEqualsClick = () => {
         const secondOperand = displayValue;
         const data = {
-            firstOperand: firstOperand,
-            secondOperand: secondOperand
+            firstOperand,
+            secondOperand,
         };
-
 
         switch (operator) {
             case '+':
                 ApiService.addition(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             case '-':
                 ApiService.subtraction(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             case '*':
                 ApiService.multiplication(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             case '/':
                 ApiService.division(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             case '√':
                 ApiService.squareRoot(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             case 'r':
                 ApiService.randomString(data)
                     .then((res) => {
-                        this.handleResult(res.data);
-                    }).catch(error => {
-                    this.handleError(error);
-                });
+                        handleResult(res.data);
+                    })
+                    .catch(handleError);
                 break;
             default:
                 return;
         }
-
-
     };
 
-    handleResult(data){
-        this.setState({
-            displayValue: data.toString(),
-            operator: null,
-            firstOperand: data,
-        });
-    }
+    const handleResult = (data) => {
+        setDisplayValue(data.toString());
+        setOperator(null);
+        setFirstOperand(data);
+    };
 
-    handleError(error){
+    const handleError = (error) => {
         console.error(error);
-    }
-
-    handleClearClick = () => {
-        this.setState({
-            displayValue: '0',
-            operator: null,
-            firstOperand: null,
-        });
     };
 
-    render() {
-        const { displayValue } = this.state;
+    const handleClearClick = () => {
+        setDisplayValue('0');
+        setOperator(null);
+        setFirstOperand(null);
+    };
 
-        return (
-            <div className="calculator">
-                <div className="display">{displayValue}</div>
-                <div className="buttons">
-                    <div className="row">
-                        <button className="btn btn-danger col-sm" onClick={() => this.handleClearClick()}>C</button>
-                        <button className="btn btn-info col-sm" onClick={() => this.handleOperatorClick('√')}>√</button>
-                        <button className="btn btn-info col-sm" onClick={() => this.handleOperatorClick('r')}>Random</button>
-                    </div>
-                    <div className="row">
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('1')}>1</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('2')}>2</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('3')}>3</button>
-                        <button className="btn btn-orange col-sm" onClick={() => this.handleOperatorClick('+')}>+</button>
+    return (
+        <div className="calculator">
+            <div className="display">{displayValue}</div>
+            <div className="buttons">
+                <div className="row">
+                    <button className="btn btn-danger col-sm" onClick={() => handleClearClick()}>C</button>
+                    <button className="btn btn-info col-sm" onClick={() => handleOperatorClick('√')}>√</button>
+                    <button className="btn btn-info col-sm" onClick={() => handleOperatorClick('r')}>Random</button>
+                </div>
+                <div className="row">
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('1')}>1</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('2')}>2</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('3')}>3</button>
+                    <button className="btn btn-orange col-sm" onClick={() => handleOperatorClick('+')}>+</button>
 
-                    </div>
-                    <div className="row">
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('4')}>4</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('5')}>5</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('6')}>6</button>
-                        <button className="btn btn-orange col-sm" onClick={() => this.handleOperatorClick('-')}>-</button>
-
-
-                    </div>
-                    <div className="row">
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('7')}>7</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('8')}>8</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('9')}>9</button>
-                        <button className="btn btn-orange col-sm" onClick={() => this.handleOperatorClick('*')}>*</button>
+                </div>
+                <div className="row">
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('4')}>4</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('5')}>5</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('6')}>6</button>
+                    <button className="btn btn-orange col-sm" onClick={() => handleOperatorClick('-')}>-</button>
 
 
-                    </div>
-                    <div className="row">
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('0')}>0</button>
-                        <button className="btn btn-secondary col-sm" onClick={() => this.handleDigitClick('.')}>.</button>
-                        <button className="btn btn-success col-sm" onClick={() => this.handleEqualsClick()}>=</button>
-                        <button className="btn btn-orange col-sm" onClick={() => this.handleOperatorClick('/')}>/</button>
+                </div>
+                <div className="row">
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('7')}>7</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('8')}>8</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('9')}>9</button>
+                    <button className="btn btn-orange col-sm" onClick={() => handleOperatorClick('*')}>*</button>
 
 
-                    </div>
-                    <div className="row">
-
-                    </div>
+                </div>
+                <div className="row">
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('0')}>0</button>
+                    <button className="btn btn-secondary col-sm" onClick={() => handleDigitClick('.')}>.</button>
+                    <button className="btn btn-success col-sm" onClick={() => handleEqualsClick()}>=</button>
+                    <button className="btn btn-orange col-sm" onClick={() => handleOperatorClick('/')}>/</button>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default Calculator;
+
